@@ -21,4 +21,4 @@ module.exports =
 	]
 	resolve:
 		extensions: ['.js','.coffee']
-		modules: ['node_modules']
+		modules: ['node_modules','src']

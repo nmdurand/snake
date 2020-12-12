@@ -1,13 +1,22 @@
+import Snake from 'snake'
 
-boardSize = 15
+boardSize = 40
 pxSize = 20 # 'Pixels' size
 
-px = py = 7 # Head position
-xv = yv = 0 # Velocity
-ax = ay = 10 # Aim position
 ctx = null # Canvas context
-trail = []
-tailSize = 5
+apple =
+	x: 10
+	y: 10
+
+snake1 = new Snake
+	px: 7
+	py: 7
+	color: 'purple'
+
+snake2 = new Snake
+	px: 4
+	py: 4
+	color: 'blue'
 
 window.onload = ->
 	canvas = document.getElementById 'canvas'
@@ -16,55 +25,66 @@ window.onload = ->
 	ctx = canvas.getContext '2d'
 
 	document.addEventListener 'keydown', handleKeydown
-	setInterval tick, 1000/15
+	setInterval processNewFrame, 1000/15
 
 handleKeydown = (e)->
 	switch e.which
 		when 37
-			unless xv is 1
-				xv = -1
-				yv = 0
+			snake1.setDir 'left'
 		when 38
-			unless yv is 1
-				xv = 0
-				yv = -1
+			snake1.setDir 'up'
 		when 39
-			unless xv is -1
-				xv = 1
-				yv = 0
+			snake1.setDir 'right'
 		when 40
-			unless yv is -1
-				xv = 0
-				yv = 1
+			snake1.setDir 'down'
+		when 81
+			snake2.setDir 'left'
+		when 90
+			snake2.setDir 'up'
+		when 68
+			snake2.setDir 'right'
+		when 83
+			snake2.setDir 'down'
 
-tick = ->
+eraseBoard = ->
 	ctx.fillStyle = 'black'
 	ctx.fillRect 0, 0, boardSize*pxSize, boardSize*pxSize
 
-	px += xv
-	py += yv
-	if px < 0 then px = boardSize - 1
-	if py < 0 then py = boardSize - 1
-	if px > boardSize-1 then px = 0
-	if py > boardSize-1 then py = 0
+drawSnake = (snake)->
+	ctx.fillStyle = snake.getColor()
+	for pos in snake.getTrail()
+		ctx.fillRect pos.x*pxSize, pos.y*pxSize, pxSize-2, pxSize-2
 
-	ctx.fillStyle = 'lightgreen'
-	for item in trail
-		ctx.fillRect item.x*pxSize, item.y*pxSize, pxSize-2, pxSize-2
-		if item.x is px and item.y is py
-			tailSize = 5
+drawApple = ->
+	ctx.fillStyle= 'orange'
+	ctx.fillRect apple.x*pxSize, apple.y*pxSize, pxSize-2, pxSize-2
 
-	trail.push
-		x: px
-		y: py
-	while trail.length > tailSize
-		trail.shift()
+setNewApple = ->
+	apple =
+		x: Math.floor Math.random()*boardSize
+		y: Math.floor Math.random()*boardSize
 
-	if ax is px and ay is py
-		tailSize += 1
+processNewFrame = ->
+	eraseBoard()
 
-		ax= Math.floor Math.random()*boardSize
-		ay= Math.floor Math.random()*boardSize
+	step snake1, snake2.getTrail()
+	step snake2, snake1.getTrail()
 
-	ctx.fillStyle= 'indianred'
-	ctx.fillRect ax*pxSize, ay*pxSize, pxSize-2, pxSize-2
+	drawApple()
+
+step = (snake,avoidPositions)->
+	nextPos = snake.getNextPos boardSize
+	if positionListContains avoidPositions, nextPos
+		snake.freeze()
+	else
+		if nextPos.x is apple.x and nextPos.y is apple.y
+			snake.grow()
+			setNewApple()
+		snake.setPos nextPos
+	drawSnake snake
+
+positionListContains = (posList,pos)->
+	for item in posList
+		if item.x is pos.x and item.y is pos.y
+			return true
+	false
