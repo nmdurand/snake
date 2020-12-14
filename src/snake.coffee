@@ -1,12 +1,31 @@
-export default class Snake
-	constructor: (@options)->
-		{ @px, @py, @color } = @options
+import EventEmitter from 'events'
+
+export default class Snake extends EventEmitter
+	constructor: (options)->
+		super()
+		{ @board, @color } = options
+		@pos =
+			x: Math.floor Math.random()*@board.getSize()
+			y: Math.floor Math.random()*@board.getSize()
 		@xv = 0
 		@yv = 0 # Velocity
 		@trail = []
 		@tailSize = 5
 		@frozen = false
 		@dir = null
+
+	getType: ->
+		'snake'
+
+	draw: ->
+		for pos in @trail
+			@board.draw pos, @color
+
+	hasPosition: (pos)->
+		for item in @trail
+			if item.x is pos.x and item.y is pos.y
+				return true
+		false
 
 	setDir: (dir)->
 		@dir = dir
@@ -33,18 +52,16 @@ export default class Snake
 				@xv = 0
 				@yv = 0
 
-
-	getNextPos: (boardSize)->
+	getNextPos: ->
 		@setVelocity()
-		x = @px
-		y = @py
+		{x, y} = @pos
 		unless @frozen
 			x += @xv
 			y += @yv
-			if x < 0 then x = boardSize - 1
-			if y < 0 then y = boardSize - 1
-			if x > boardSize-1 then x = 0
-			if y > boardSize-1 then y = 0
+			if x < 0 then x = @board.getSize() - 1
+			if y < 0 then y = @board.getSize() - 1
+			if x > @board.getSize()-1 then x = 0
+			if y > @board.getSize()-1 then y = 0
 
 		x:x
 		y:y
@@ -55,15 +72,8 @@ export default class Snake
 	getTrail: ->
 		@trail
 
-	trailContains: (pos)->
-		for item in @trail
-			if item.x is pos.x and item.y is pos.y
-				return true
-		false
-
 	setPos: (pos)->
-		@px = pos.x
-		@py = pos.y
+		@pos = pos
 		@setTrail pos
 
 	setTrail: (pos)->
@@ -80,4 +90,5 @@ export default class Snake
 		), 1000
 
 	grow: ->
+		console.log 'GROWING'
 		@tailSize += 1
