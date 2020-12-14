@@ -11,7 +11,7 @@ export default class Snake extends BoardItem
 			x: 0
 			y: 0
 		@trail = []
-		@tailSize = 5
+		@tailSize = 3
 		@frozen = false
 		@dir = null
 
@@ -92,19 +92,19 @@ export default class Snake extends BoardItem
 		@trail
 
 	setPos: (pos)->
-		@pos = pos
+		@pos = pos if pos?
 		@setTrail pos
 
 	setTrail: (pos)->
-		@trail.push pos
+		@trail.push pos if pos?
 		while @trail.length > @tailSize
 			@trail.shift()
 
 	freeze: ->
-		@tailSize = 1
+		@tailSize = 3
 		@frozen = true
 		setTimeout (=>
-			@tailSize = 5
+			@tailSize = 3
 			@frozen = false
 		), 1000
 

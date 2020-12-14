@@ -22,7 +22,7 @@ export default class App
 			boardSize: boardSize
 			pixelSize: pxSize
 
-		@snake1 = new Snake
+		@registerItem new Snake
 			board: @board
 			color: 'purple'
 			keys:
@@ -31,7 +31,7 @@ export default class App
 				right: 39
 				down: 40
 
-		@snake2 = new Snake
+		@registerItem new Snake
 			board: @board
 			color: 'blue'
 			keys:
@@ -40,13 +40,17 @@ export default class App
 				right: 68
 				down: 83
 
-		@apple = new Apple
+		@registerItem new Apple
 			color: 'orange'
 			board: @board
 
-		@registerItem @snake1
-		@registerItem @snake2
-		@registerItem @apple
+		@registerItem new Apple
+			color: 'orange'
+			board: @board
+
+		@registerItem new Apple
+			color: 'orange'
+			board: @board
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
 		setInterval (=> @refreshGame()), 1000/15
@@ -75,7 +79,9 @@ export default class App
 					else if item2.getType() is 'snake'
 						if item2.hasPosition nextPos1
 							item1.freeze()
+							nextPos1 = null
 							break
+
 				item1.setPos nextPos1
 
 	drawItems: ->
