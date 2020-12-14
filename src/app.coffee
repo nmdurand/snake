@@ -8,6 +8,7 @@ pxSize = 20 # 'Pixels' size
 export default class App
 	constructor: ->
 		console.log 'Initializing app.'
+		@items = []
 
 	start: ->
 		console.log 'Startinging app.'
@@ -43,17 +44,40 @@ export default class App
 			color: 'orange'
 			board: @board
 
-		@board.register @snake1
-		@board.register @snake2
-		@board.register @apple
+		@registerItem @snake1
+		@registerItem @snake2
+		@registerItem @apple
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
-		setInterval (=> @step()), 1000/15
+		setInterval (=> @refreshGame()), 1000/15
 
 	handleKeydown: (e)->
-		@board.emit 'board:keydown', e.which
+		for item in @items
+			item.emit 'keydown', e.which
+
+	refreshGame: ->
+		@board.erase()
+		@step()
+		@drawItems()
+
+	registerItem: (item)->
+		@items.push item
 
 	step: ->
-		@board.erase()
-		@board.step()
-		@board.drawItems()
+		for item1 in @items
+			if item1.getType() is 'snake'
+				nextPos1 = item1.getNextPos()
+				for item2 in @items
+					if item2.getType() is 'apple'
+						if item2.hasPosition nextPos1
+							item1.grow()
+							item2.setNewPos()
+					else if item2.getType() is 'snake'
+						if item2.hasPosition nextPos1
+							item1.freeze()
+							break
+				item1.setPos nextPos1
+
+	drawItems: ->
+		for item in @items
+			item.draw()

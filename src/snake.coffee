@@ -15,7 +15,7 @@ export default class Snake extends EventEmitter
 		@frozen = false
 		@dir = null
 
-		@board.on 'board:keydown', (kc)=> @handleKeydown kc
+		@on 'keydown', (kc)=> @handleKeydown kc
 
 	getType: ->
 		'snake'
