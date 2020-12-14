@@ -3,16 +3,19 @@ import EventEmitter from 'events'
 export default class Snake extends EventEmitter
 	constructor: (options)->
 		super()
-		{ @board, @color } = options
+		{ @board, @color, @keys } = options
 		@pos =
 			x: Math.floor Math.random()*@board.getSize()
 			y: Math.floor Math.random()*@board.getSize()
-		@xv = 0
-		@yv = 0 # Velocity
+		@vel =
+			x: 0
+			y: 0
 		@trail = []
 		@tailSize = 5
 		@frozen = false
 		@dir = null
+
+		@board.on 'board:keydown', (kc)=> @handleKeydown kc
 
 	getType: ->
 		'snake'
@@ -27,37 +30,53 @@ export default class Snake extends EventEmitter
 				return true
 		false
 
+	handleKeydown: (keycode)->
+		switch keycode
+			when @keys.left
+				@setDir 'left'
+			when @keys.up
+				@setDir 'up'
+			when @keys.right
+				@setDir 'right'
+			when @keys.down
+				@setDir 'down'
+
 	setDir: (dir)->
 		@dir = dir
 
 	setVelocity: ->
 		switch @dir
 			when 'up'
-				unless @yv is 1
-					@xv = 0
-					@yv = -1
+				unless @vel.y is 1
+					@vel =
+						x: 0
+						y: -1
 			when 'down'
-				unless @yv is -1
-					@xv = 0
-					@yv = 1
+				unless @vel.y is -1
+					@vel =
+						x: 0
+						y: 1
 			when 'left'
-				unless @xv is 1
-					@xv = -1
-					@yv = 0
+				unless @vel.x is 1
+					@vel =
+						x: -1
+						y: 0
 			when 'right'
-				unless @xv is -1
-					@xv = 1
-					@yv = 0
+				unless @vel.x is -1
+					@vel =
+						x: 1
+						y: 0
 			else
-				@xv = 0
-				@yv = 0
+				@vel =
+					x: 0
+					y: 0
 
 	getNextPos: ->
 		@setVelocity()
 		{x, y} = @pos
 		unless @frozen
-			x += @xv
-			y += @yv
+			x += @vel.x
+			y += @vel.y
 			if x < 0 then x = @board.getSize() - 1
 			if y < 0 then y = @board.getSize() - 1
 			if x > @board.getSize()-1 then x = 0
