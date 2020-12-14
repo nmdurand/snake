@@ -1,6 +1,6 @@
-import EventEmitter from 'events'
+import BoardItem from 'boardItem'
 
-export default class Snake extends EventEmitter
+export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
 		{ @board, @color } = options

@@ -1,6 +1,6 @@
 import Board from 'board'
-import Snake from 'snake'
-import Apple from 'apple'
+import Snake from 'items/snake'
+import Apple from 'items/apple'
 
 boardSize = 40 # In 'pixels'
 pxSize = 20 # 'Pixels' size
@@ -11,7 +11,7 @@ export default class App
 		@items = []
 
 	start: ->
-		console.log 'Startinging app.'
+		console.log 'Starting app.'
 		canvas = document.getElementById 'canvas'
 		canvas.setAttribute 'width', boardSize*pxSize
 		canvas.setAttribute 'height', boardSize*pxSize
