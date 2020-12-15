@@ -40,20 +40,16 @@ export default class App
 				right: 68
 				down: 83
 
-		@registerItem new Apple
-			color: 'orange'
-			board: @board
-
-		@registerItem new Apple
-			color: 'orange'
-			board: @board
-
-		@registerItem new Apple
-			color: 'orange'
-			board: @board
+		@addApples 4
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
 		setInterval (=> @refreshGame()), 1000/15
+
+	addApples: (n)->
+		for i in [1..n]
+			@registerItem new Apple
+				color: 'orange'
+				board: @board
 
 	handleKeydown: (e)->
 		for item in @items
