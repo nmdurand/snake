@@ -14,6 +14,13 @@ module.exports =
 		rules: [
 			test: /\.coffee$/,
 			loader: 'coffee-loader'
+		,
+			test: /\.s?css$/
+			use: [
+				'style-loader',
+				'css-loader',
+				'sass-loader'
+			]
 		]
 	plugins: [
 		new HtmlWebpackPlugin

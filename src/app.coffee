@@ -23,6 +23,7 @@ export default class App
 			pixelSize: pxSize
 
 		@registerItem new Snake
+			playerId: 1
 			board: @board
 			color: 'purple'
 			keys:
@@ -32,6 +33,7 @@ export default class App
 				down: 40
 
 		@registerItem new Snake
+			playerId: 2
 			board: @board
 			color: 'blue'
 			keys:
@@ -71,6 +73,8 @@ export default class App
 					if item2.getType() is 'apple'
 						if item2.hasPosition nextPos1
 							item1.grow()
+							console.log 'APPLE!!'
+							item1.addPoints 10
 							item2.setNewPos()
 					else if item2.getType() is 'snake'
 						if item2.hasPosition nextPos1

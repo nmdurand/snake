@@ -3,7 +3,7 @@ import BoardItem from 'boardItem'
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @board, @color, @keys } = options
+		{ @playerId, @board, @color, @keys } = options
 		@pos =
 			x: Math.floor Math.random()*@board.getSize()
 			y: Math.floor Math.random()*@board.getSize()
@@ -14,6 +14,7 @@ export default class Snake extends BoardItem
 		@tailSize = 3
 		@frozen = false
 		@dir = null
+		@score = 0
 
 		@on 'keydown', (kc)=> @handleKeydown kc
 
@@ -110,3 +111,13 @@ export default class Snake extends BoardItem
 
 	grow: ->
 		@tailSize += 1
+
+	addPoints: (val)->
+		console.log 'Coucou'
+		@score += val
+		@updateScoreDisplay()
+
+	updateScoreDisplay: ->
+		scoreDiv = document.getElementById "player#{@playerId}-score"
+		console.log 'Update',scoreDiv
+		scoreDiv.innerHTML = @score

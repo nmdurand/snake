@@ -1,0 +1,19 @@
+
+.title {
+	font-size: 3em;
+	text-align: center;
+}
+.gameContainer {
+	display: flex;
+	.scores {
+		font-size: 2em;
+		.scoreTitle {
+			text-align: center;
+		}
+		.playerScores {
+			.player {
+				display: flex;
+			}
+		}
+	}
+}
