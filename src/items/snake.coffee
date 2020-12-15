@@ -5,7 +5,7 @@ DIRECTIONS = ['up','down','left','right']
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @playerId, @board, @color, @keys } = options
+		{ @playerId, @playerName, @board, @color, @keys } = options
 		@pos =
 			x: Math.floor Math.random()*@board.getSize()
 			y: Math.floor Math.random()*@board.getSize()
@@ -19,6 +19,7 @@ export default class Snake extends BoardItem
 		@score = 0
 
 		if @keys?
+			@setupScoreDisplay()
 			@on 'keydown', (kc)=> @handleKeydown kc
 		else
 			@triggerNewDirection()
@@ -123,6 +124,21 @@ export default class Snake extends BoardItem
 
 	grow: ->
 		@tailSize += 1
+
+	setupScoreDisplay: ->
+		scoreList = document.getElementById "scoreList"
+		player = document.createElement 'div'
+		player.classList.add 'player'
+		playerName = document.createElement 'div'
+		playerName.classList.add 'playerName'
+		playerName.innerHTML = @playerName + " / "
+		scoreValue = document.createElement 'div'
+		scoreValue.classList.add 'scoreValue'
+		scoreValue.innerHTML = 0
+		scoreValue.id = "player#{@playerId}-score"
+		player.appendChild playerName
+		player.appendChild scoreValue
+		scoreList.append player
 
 	updatePoints: (val)->
 		if @playerId

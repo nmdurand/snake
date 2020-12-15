@@ -24,6 +24,7 @@ export default class App
 
 		@registerItem new Snake
 			playerId: 1
+			playerName: 'Player 1'
 			board: @board
 			color: 'purple'
 			keys:
@@ -34,6 +35,7 @@ export default class App
 
 		@registerItem new Snake
 			playerId: 2
+			playerName: 'Player 2'
 			board: @board
 			color: 'blue'
 			keys:
