@@ -42,7 +42,11 @@ export default class App
 				right: 68
 				down: 83
 
-		@addApples 4
+		@registerItem new Snake
+			board: @board
+			color: 'red'
+
+		@addApples 6
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
 		setInterval (=> @refreshGame()), 1000/15
@@ -73,8 +77,7 @@ export default class App
 					if item2.getType() is 'apple'
 						if item2.hasPosition nextPos1
 							item1.grow()
-							console.log 'APPLE!!'
-							item1.addPoints 10
+							item1.updatePoints 10
 							item2.setNewPos()
 					else if item2.getType() is 'snake'
 						if item2.hasPosition nextPos1

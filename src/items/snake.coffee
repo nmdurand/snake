@@ -1,5 +1,7 @@
 import BoardItem from 'boardItem'
 
+DIRECTIONS = ['up','down','left','right']
+
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
@@ -16,7 +18,10 @@ export default class Snake extends BoardItem
 		@dir = null
 		@score = 0
 
-		@on 'keydown', (kc)=> @handleKeydown kc
+		if @keys?
+			@on 'keydown', (kc)=> @handleKeydown kc
+		else
+			@triggerNewDirection()
 
 	getType: ->
 		'snake'
@@ -41,6 +46,13 @@ export default class Snake extends BoardItem
 				@setDir 'right'
 			when @keys.down
 				@setDir 'down'
+
+	triggerNewDirection: ->
+		timeout = 1500*Math.random()
+		setTimeout =>
+			@setDir DIRECTIONS[Math.floor(Math.random()*4)]
+			@triggerNewDirection()
+		, timeout
 
 	setDir: (dir)->
 		@dir = dir
@@ -112,12 +124,11 @@ export default class Snake extends BoardItem
 	grow: ->
 		@tailSize += 1
 
-	addPoints: (val)->
-		console.log 'Coucou'
-		@score += val
-		@updateScoreDisplay()
+	updatePoints: (val)->
+		if @playerId
+			@score += val
+			@updateScoreDisplay()
 
 	updateScoreDisplay: ->
 		scoreDiv = document.getElementById "player#{@playerId}-score"
-		console.log 'Update',scoreDiv
 		scoreDiv.innerHTML = @score
