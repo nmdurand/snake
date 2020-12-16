@@ -51,7 +51,7 @@ export default class App
 		@addApples 6
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
-		setInterval (=> @refreshGame()), 1000/15
+		@refreshInterval = setInterval (=> @refreshGame()), 1000/15
 
 	addApples: (n)->
 		for i in [1..n]
@@ -70,6 +70,7 @@ export default class App
 
 	registerItem: (item)->
 		@items.push item
+		item.on 'game:end', => @handleGameEnd()
 
 	step: ->
 		for item1 in @items
@@ -79,7 +80,7 @@ export default class App
 					if item2.getType() is 'apple'
 						if item2.hasPosition nextPos1
 							item1.grow()
-							item1.updatePoints 10
+							item1.updatePoints item2.getPoints()
 							item2.setNewPos()
 					else if item2.getType() is 'snake'
 						if item2.hasPosition nextPos1
@@ -92,3 +93,7 @@ export default class App
 	drawItems: ->
 		for item in @items
 			item.draw()
+
+	handleGameEnd: ->
+		clearInterval @refreshInterval
+		console.log 'Game ended !'

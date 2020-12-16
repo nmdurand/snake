@@ -1,28 +1,28 @@
 import BoardItem from 'boardItem'
 
 DIRECTIONS = ['up','down','left','right']
+FAIL_TIMEOUT = 1000
 
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
 		{ @playerId, @playerName, @board, @color, @keys } = options
-		@pos =
-			x: Math.floor Math.random()*@board.getSize()
-			y: Math.floor Math.random()*@board.getSize()
-		@vel =
-			x: 0
-			y: 0
-		@trail = []
-		@tailSize = 3
+		@lives = 3
 		@frozen = false
-		@dir = null
 		@score = 0
+		@initialize()
 
 		if @keys?
 			@setupScoreDisplay()
 			@on 'keydown', (kc)=> @handleKeydown kc
 		else
 			@triggerNewDirection()
+
+	initialize: ->
+		@setDir 'stop'
+		@trail = []
+		@tailSize = 5
+		@setNewPos()
 
 	getType: ->
 		'snake'
@@ -32,10 +32,16 @@ export default class Snake extends BoardItem
 			@board.draw pos, @color
 
 	hasPosition: (pos)->
-		for item in @trail
-			if item.x is pos.x and item.y is pos.y
-				return true
+		if pos?
+			for item in @trail
+				if item.x is pos.x and item.y is pos.y
+					return true
 		false
+
+	setNewPos: ->
+		@setPos
+			x: Math.floor Math.random()*@board.getSize()
+			y: Math.floor Math.random()*@board.getSize()
 
 	handleKeydown: (keycode)->
 		switch keycode
@@ -80,24 +86,28 @@ export default class Snake extends BoardItem
 					@vel =
 						x: 1
 						y: 0
-			else
+			when 'stop'
 				@vel =
 					x: 0
 					y: 0
 
-	getNextPos: ->
-		@setVelocity()
-		{x, y} = @pos
-		unless @frozen
-			x += @vel.x
-			y += @vel.y
-			if x < 0 then x = @board.getSize() - 1
-			if y < 0 then y = @board.getSize() - 1
-			if x > @board.getSize()-1 then x = 0
-			if y > @board.getSize()-1 then y = 0
+	isStopped: ->
+		@vel.x is 0 and @vel.y is 0
 
-		x:x
-		y:y
+	getNextPos: ->
+		unless @frozen
+			@setVelocity()
+			unless @isStopped()
+				{x, y} = @pos
+				x += @vel.x
+				y += @vel.y
+				if x < 0 then x = @board.getSize() - 1
+				if y < 0 then y = @board.getSize() - 1
+				if x > @board.getSize()-1 then x = 0
+				if y > @board.getSize()-1 then y = 0
+
+				x:x
+				y:y
 
 	getColor: ->
 		@color
@@ -115,15 +125,21 @@ export default class Snake extends BoardItem
 			@trail.shift()
 
 	freeze: ->
-		@tailSize = 3
-		@frozen = true
-		setTimeout (=>
-			@tailSize = 3
-			@frozen = false
-		), 1000
+		unless @frozen
+			@frozen = true
+			@lives -= 1
+			if @lives is 0
+				@emit 'game:end'
+			else
+				@initialize()
+				setTimeout (=>
+					@frozen = false
+				), FAIL_TIMEOUT
 
 	grow: ->
 		@tailSize += 1
+
+	###### SCORE
 
 	setupScoreDisplay: ->
 		scoreList = document.getElementById "scoreList"
