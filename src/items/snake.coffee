@@ -14,7 +14,6 @@ export default class Snake extends BoardItem
 
 		if @keys?
 			@setupScoreDisplay()
-			@on 'keydown', (kc)=> @handleKeydown kc
 		else
 			@triggerNewDirection()
 
@@ -44,15 +43,16 @@ export default class Snake extends BoardItem
 			y: Math.floor Math.random()*@board.getSize()
 
 	handleKeydown: (keycode)->
-		switch keycode
-			when @keys.left
-				@setDir 'left'
-			when @keys.up
-				@setDir 'up'
-			when @keys.right
-				@setDir 'right'
-			when @keys.down
-				@setDir 'down'
+		if @keys?
+			switch keycode
+				when @keys.left
+					@setDir 'left'
+				when @keys.up
+					@setDir 'up'
+				when @keys.right
+					@setDir 'right'
+				when @keys.down
+					@setDir 'down'
 
 	triggerNewDirection: ->
 		timeout = 1500*Math.random()
@@ -124,7 +124,7 @@ export default class Snake extends BoardItem
 		while @trail.length > @tailSize
 			@trail.shift()
 
-	freeze: ->
+	fail: ->
 		unless @frozen
 			@frozen = true
 			@lives -= 1

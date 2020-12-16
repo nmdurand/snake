@@ -61,7 +61,7 @@ export default class App
 
 	handleKeydown: (e)->
 		for item in @items
-			item.emit 'keydown', e.which
+			item.handleKeydown e.which
 
 	refreshGame: ->
 		@board.erase()
@@ -84,7 +84,7 @@ export default class App
 							item2.setNewPos()
 					else if item2.getType() is 'snake'
 						if item2.hasPosition nextPos1
-							item1.freeze()
+							item1.fail()
 							nextPos1 = null
 							break
 
