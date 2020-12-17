@@ -6,7 +6,7 @@ FAIL_TIMEOUT = 1000
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @playerId, @playerName, @board, @color, @keys } = options
+		{ @id, @playerName, @board, @color, @keys } = options
 		@lives = 3
 		@frozen = false
 		@score = 0
@@ -25,6 +25,9 @@ export default class Snake extends BoardItem
 
 	getType: ->
 		'snake'
+
+	getId: ->
+		@id
 
 	draw: ->
 		for pos in @trail
@@ -152,7 +155,7 @@ export default class Snake extends BoardItem
 		scoreValue = document.createElement 'div'
 		scoreValue.classList.add 'scoreValue'
 		scoreValue.innerHTML = 0
-		scoreValue.id = "player#{@playerId}-score"
+		scoreValue.id = "player#{@id}-score"
 		@livesContainer = document.createElement 'div'
 		@livesContainer.classList.add 'livesContainer'
 		@updateLives()
@@ -163,18 +166,19 @@ export default class Snake extends BoardItem
 		scoreList.append player
 
 	updatePoints: (val)->
-		if @playerId
+		if @id
 			@score += val
 			@updateScoreDisplay()
 
 	updateScoreDisplay: ->
-		scoreDiv = document.getElementById "player#{@playerId}-score"
+		scoreDiv = document.getElementById "player#{@id}-score"
 		scoreDiv.innerHTML = @score
 
 	updateLives: =>
-		@livesContainer.innerHTML = ''
-		if @lives > 0
-			for i in [1..@lives]
-				lifeIcon = document.createElement 'div'
-				lifeIcon.classList.add 'lifeIcon'
-				@livesContainer.appendChild lifeIcon
+		if @livesContainer?
+			@livesContainer.innerHTML = ''
+			if @lives > 0
+				for i in [1..@lives]
+					lifeIcon = document.createElement 'div'
+					lifeIcon.classList.add 'lifeIcon'
+					@livesContainer.appendChild lifeIcon

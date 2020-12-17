@@ -3,12 +3,15 @@ import BoardItem from 'boardItem'
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @board, @color } = options
+		{ @board, @color, @id } = options
 
 		@setNewPos()
 
 	getType: ->
 		'apple'
+
+	getId: ->
+		@id
 
 	draw: ->
 		@board.draw @pos, 'orange'

@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 import Board from 'board'
 import Snake from 'items/snake'
 import Apple from 'items/apple'
@@ -9,6 +11,10 @@ export default class App
 	constructor: ->
 		console.log 'Initializing app.'
 		@items = []
+		@idGenerator = 0
+
+	generateId: ->
+		@idGenerator += 1
 
 	start: ->
 		console.log 'Starting app.'
@@ -22,10 +28,8 @@ export default class App
 			boardSize: boardSize
 			pixelSize: pxSize
 
-		@registerItem new Snake
-			playerId: 1
+		@addSnake
 			playerName: 'Player 1'
-			board: @board
 			color: 'purple'
 			keys:
 				left: 37
@@ -59,9 +63,18 @@ export default class App
 				color: 'orange'
 				board: @board
 
+	addSnake: (options)->
+		@registerItem new Snake
+			id: @generateId()
+			playerName: options.playerName
+			board: @board
+			color: options.color
+			keys: options.keys
+
 	handleKeydown: (e)->
 		for item in @items
-			item.handleKeydown e.which
+			if item.handleKeydown?
+				item.handleKeydown e.which
 
 	refreshGame: ->
 		@board.erase()
