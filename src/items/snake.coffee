@@ -128,6 +128,7 @@ export default class Snake extends BoardItem
 		unless @frozen
 			@frozen = true
 			@lives -= 1
+			@updateLives()
 			if @lives is 0
 				@emit 'game:end'
 			else
@@ -152,8 +153,13 @@ export default class Snake extends BoardItem
 		scoreValue.classList.add 'scoreValue'
 		scoreValue.innerHTML = 0
 		scoreValue.id = "player#{@playerId}-score"
+		@livesContainer = document.createElement 'div'
+		@livesContainer.classList.add 'livesContainer'
+		@updateLives()
+
 		player.appendChild playerName
 		player.appendChild scoreValue
+		player.appendChild @livesContainer
 		scoreList.append player
 
 	updatePoints: (val)->
@@ -164,3 +170,11 @@ export default class Snake extends BoardItem
 	updateScoreDisplay: ->
 		scoreDiv = document.getElementById "player#{@playerId}-score"
 		scoreDiv.innerHTML = @score
+
+	updateLives: =>
+		@livesContainer.innerHTML = ''
+		if @lives > 0
+			for i in [1..@lives]
+				lifeIcon = document.createElement 'div'
+				lifeIcon.classList.add 'lifeIcon'
+				@livesContainer.appendChild lifeIcon

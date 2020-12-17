@@ -21,6 +21,11 @@ module.exports =
 				'css-loader',
 				'sass-loader'
 			]
+		,
+			test: /\.(png|svg|jpg|gif|svg)$/
+			loader: 'file-loader'
+			options:
+				outputPath: 'images/'
 		]
 	plugins: [
 		new HtmlWebpackPlugin
