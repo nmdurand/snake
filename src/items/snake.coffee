@@ -10,6 +10,7 @@ export default class Snake extends BoardItem
 		@lives = 3
 		@frozen = false
 		@score = 0
+		@tailSize = 5
 		@initialize()
 
 		if @keys?
@@ -20,7 +21,6 @@ export default class Snake extends BoardItem
 	initialize: ->
 		@setDir 'stop'
 		@trail = []
-		@tailSize = 5
 		@setNewPos()
 
 	getType: ->
