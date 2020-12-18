@@ -1,9 +1,10 @@
-import BoardItem from 'boardItem'
+import BoardItem from 'engine/boardItem'
 
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @board, @color } = options
+		{ @color, @controller } = options
+		@boardSize = @controller.getBoardSize()
 
 		@setNewPos()
 
@@ -11,7 +12,7 @@ export default class Snake extends BoardItem
 		'apple'
 
 	draw: ->
-		@board.draw @pos, 'orange'
+		@controller.draw @pos, 'orange'
 
 	hasPosition: (pos)->
 		if pos?
@@ -21,8 +22,8 @@ export default class Snake extends BoardItem
 
 	setNewPos: ->
 		@pos =
-			x: Math.floor Math.random()*@board.getSize()
-			y: Math.floor Math.random()*@board.getSize()
+			x: Math.floor Math.random()*@boardSize
+			y: Math.floor Math.random()*@boardSize
 
 	getPoints: ->
 		10

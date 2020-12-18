@@ -1,10 +1,10 @@
 
-export default class Board
+export default class CanvasController
 	constructor: (options)->
-		{ @ctx, @boardSize, @pixelSize } = options
-
-	getSize: ->
-		@boardSize
+		{ @controller } = options
+		@boardSize = @controller.getBoardSize()
+		@pixelSize = @controller.getPixelSize()
+		@ctx = @controller.getCtx()
 
 	erase: ->
 		@ctx.fillStyle = 'black'

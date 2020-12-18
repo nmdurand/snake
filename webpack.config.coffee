@@ -5,8 +5,9 @@ module.exports =
 	mode: 'development'
 	devServer:
 		contentBase: path.join __dirname,'dist'
+	devtool: 'inline-source-map'
 	context: path.join __dirname,'src'
-	entry: './main.coffee'
+	entry: './scripts/main.coffee'
 	output:
 		filename: 'main.js'
 		path: path.resolve __dirname, 'dist'
@@ -22,6 +23,9 @@ module.exports =
 				'sass-loader'
 			]
 		,
+			test: /\.hbs$/
+			loader: 'handlebars-loader'
+		,
 			test: /\.(png|svg|jpg|gif|svg)$/
 			loader: 'file-loader'
 			options:
@@ -32,5 +36,5 @@ module.exports =
 			template: './index.html'
 	]
 	resolve:
-		extensions: ['.js','.coffee']
-		modules: ['node_modules','src']
+		extensions: ['.js','.coffee','.hbs']
+		modules: ['node_modules','src/scripts']

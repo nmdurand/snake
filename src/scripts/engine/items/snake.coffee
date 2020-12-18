@@ -1,4 +1,4 @@
-import BoardItem from 'boardItem'
+import BoardItem from 'engine/boardItem'
 
 DIRECTIONS = ['up','down','left','right']
 FAIL_TIMEOUT = 1000
@@ -6,15 +6,17 @@ FAIL_TIMEOUT = 1000
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @id, @playerName, @board, @color, @keys } = options
+		{ @id, @playerName, @color, @keys, @controller } = options
+		console.log 'Initializing snake', options
 		@lives = 3
 		@frozen = false
 		@score = 0
 		@tailSize = 5
+		@boardSize = @controller.getBoardSize()
 		@initialize()
 
 		if @keys?
-			@setupScoreDisplay()
+			# @setupScoreDisplay()
 		else
 			@triggerNewDirection()
 
@@ -31,7 +33,7 @@ export default class Snake extends BoardItem
 
 	draw: ->
 		for pos in @trail
-			@board.draw pos, @color
+			@controller.draw pos, @color
 
 	hasPosition: (pos)->
 		if pos?
@@ -42,8 +44,8 @@ export default class Snake extends BoardItem
 
 	setNewPos: ->
 		@setPos
-			x: Math.floor Math.random()*@board.getSize()
-			y: Math.floor Math.random()*@board.getSize()
+			x: Math.floor Math.random()*@boardSize
+			y: Math.floor Math.random()*@boardSize
 
 	handleKeydown: (keycode)->
 		if @keys?
@@ -104,10 +106,10 @@ export default class Snake extends BoardItem
 				{x, y} = @pos
 				x += @vel.x
 				y += @vel.y
-				if x < 0 then x = @board.getSize() - 1
-				if y < 0 then y = @board.getSize() - 1
-				if x > @board.getSize()-1 then x = 0
-				if y > @board.getSize()-1 then y = 0
+				if x < 0 then x = @boardSize - 1
+				if y < 0 then y = @boardSize - 1
+				if x > @boardSize-1 then x = 0
+				if y > @boardSize-1 then y = 0
 
 				x:x
 				y:y
@@ -131,7 +133,7 @@ export default class Snake extends BoardItem
 		unless @frozen
 			@frozen = true
 			@lives -= 1
-			@updateLives()
+			# @updateLives()
 			if @lives is 0
 				@emit 'game:end'
 			else
@@ -145,40 +147,40 @@ export default class Snake extends BoardItem
 
 	###### SCORE
 
-	setupScoreDisplay: ->
-		scoreList = document.getElementById "scoreList"
-		player = document.createElement 'div'
-		player.classList.add 'player'
-		playerName = document.createElement 'div'
-		playerName.classList.add 'playerName'
-		playerName.innerHTML = @playerName + " / "
-		scoreValue = document.createElement 'div'
-		scoreValue.classList.add 'scoreValue'
-		scoreValue.innerHTML = 0
-		scoreValue.id = "player#{@id}-score"
-		@livesContainer = document.createElement 'div'
-		@livesContainer.classList.add 'livesContainer'
-		@updateLives()
-
-		player.appendChild playerName
-		player.appendChild scoreValue
-		player.appendChild @livesContainer
-		scoreList.append player
-
-	updatePoints: (val)->
-		if @id
-			@score += val
-			@updateScoreDisplay()
-
-	updateScoreDisplay: ->
-		scoreDiv = document.getElementById "player#{@id}-score"
-		scoreDiv.innerHTML = @score
-
-	updateLives: =>
-		if @livesContainer?
-			@livesContainer.innerHTML = ''
-			if @lives > 0
-				for i in [1..@lives]
-					lifeIcon = document.createElement 'div'
-					lifeIcon.classList.add 'lifeIcon'
-					@livesContainer.appendChild lifeIcon
+	# setupScoreDisplay: ->
+	# 	scoreList = document.getElementById "scoreList"
+	# 	player = document.createElement 'div'
+	# 	player.classList.add 'player'
+	# 	playerName = document.createElement 'div'
+	# 	playerName.classList.add 'playerName'
+	# 	playerName.innerHTML = @playerName + " / "
+	# 	scoreValue = document.createElement 'div'
+	# 	scoreValue.classList.add 'scoreValue'
+	# 	scoreValue.innerHTML = 0
+	# 	scoreValue.id = "player#{@id}-score"
+	# 	@livesContainer = document.createElement 'div'
+	# 	@livesContainer.classList.add 'livesContainer'
+	# 	@updateLives()
+	#
+	# 	player.appendChild playerName
+	# 	player.appendChild scoreValue
+	# 	player.appendChild @livesContainer
+	# 	scoreList.append player
+	#
+	# updatePoints: (val)->
+	# 	if @id
+	# 		@score += val
+	# 		@updateScoreDisplay()
+	#
+	# updateScoreDisplay: ->
+	# 	scoreDiv = document.getElementById "player#{@id}-score"
+	# 	scoreDiv.innerHTML = @score
+	#
+	# updateLives: =>
+	# 	if @livesContainer?
+	# 		@livesContainer.innerHTML = ''
+	# 		if @lives > 0
+	# 			for i in [1..@lives]
+	# 				lifeIcon = document.createElement 'div'
+	# 				lifeIcon.classList.add 'lifeIcon'
+	# 				@livesContainer.appendChild lifeIcon

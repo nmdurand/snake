@@ -1,15 +1,22 @@
+
+import Marionette from 'backbone.marionette'
+
+import CanvasController from 'engine/canvas'
+
+import GameLayout from 'views/layout'
 import _ from 'lodash'
 
-import Board from 'board'
-import Snake from 'items/snake'
-import Apple from 'items/apple'
+# import Board from 'engine/board'
+import Snake from 'engine/items/snake'
+import Apple from 'engine/items/apple'
 
 boardSize = 40 # In 'pixels'
 pxSize = 20 # 'Pixels' size
 
-export default class App
-	constructor: ->
-		console.log 'Initializing app.'
+export default class Game extends Marionette.MnObject
+	initialize: ->
+		console.log 'Initializing game controller.',@options
+		{@showView} = @options
 		@items = []
 		@idGenerator = 0
 
@@ -17,17 +24,27 @@ export default class App
 		@idGenerator += 1
 
 	start: ->
-		console.log 'Starting app.'
-		canvas = document.getElementById 'canvas'
-		canvas.setAttribute 'width', boardSize*pxSize
-		canvas.setAttribute 'height', boardSize*pxSize
-		ctx = canvas.getContext '2d'
+		console.log 'Game started.'
+		@showGame()
+		@canvasController = new CanvasController
+			controller: @
+		@startGame()
 
-		@board = new Board
-			ctx: ctx
-			boardSize: boardSize
-			pixelSize: pxSize
+	showGame: ->
+		unless @layout?
+			@layout = new GameLayout
+				controller: @
+		@showView @layout
 
+	getBoardSize: ->
+		boardSize
+	getPixelSize: ->
+		pxSize
+
+	draw: (args...)->
+		@canvasController.draw args...
+
+	startGame: ->
 		@addSnake
 			playerName: 'Player 1'
 			color: 'purple'
@@ -37,10 +54,8 @@ export default class App
 				right: 39
 				down: 40
 
-		@registerItem new Snake
-			playerId: 2
+		@addSnake
 			playerName: 'Player 2'
-			board: @board
 			color: 'blue'
 			keys:
 				left: 81
@@ -48,8 +63,7 @@ export default class App
 				right: 68
 				down: 83
 
-		@registerItem new Snake
-			board: @board
+		@addSnake
 			color: 'red'
 
 		@addApples 6
@@ -61,15 +75,17 @@ export default class App
 		for i in [1..n]
 			@registerItem new Apple
 				color: 'orange'
-				board: @board
+				controller: @
 
 	addSnake: (options)->
-		@registerItem new Snake
+		console.log 'Adding snake', options
+		opts =
 			id: @generateId()
 			playerName: options.playerName
-			board: @board
 			color: options.color
 			keys: options.keys
+			controller: @
+		@registerItem new Snake(opts)
 
 	handleKeydown: (e)->
 		for item in @items
@@ -77,7 +93,7 @@ export default class App
 				item.handleKeydown e.which
 
 	refreshGame: ->
-		@board.erase()
+		@canvasController.erase()
 		@step()
 		@drawItems()
 
@@ -93,7 +109,7 @@ export default class App
 					if item2.getType() is 'apple'
 						if item2.hasPosition nextPos1
 							item1.grow()
-							item1.updatePoints item2.getPoints()
+							# item1.updatePoints item2.getPoints()
 							item2.setNewPos()
 					else if item2.getType() is 'snake'
 						if item2.hasPosition nextPos1
