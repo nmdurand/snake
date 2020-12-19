@@ -66,13 +66,9 @@ export default class Game extends Marionette.MnObject
 				right: 68
 				down: 83
 
-		@addSnake
-			color: 'red'
-		@addSnake
-			color: 'red'
-
+		@addMachineSnakes 2
 		@addApples 6
-		@updateStates()
+		@handleStateChanged()
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
 		@refreshInterval = setInterval (=> @refreshGame()), 1000/15
@@ -83,20 +79,24 @@ export default class Game extends Marionette.MnObject
 				color: 'orange'
 				controller: @
 
+	addMachineSnakes: (n)->
+		for i in [1..n]
+			@addSnake
+				color: 'red'
+
 	addSnake: (options)->
 		console.log 'Adding snake', options
-		id = @generateId()
 		opts =
-			id: id
-			playerName: "Player #{id}"
+			id: @generateId()
+			playerName: options.playerName
 			color: options.color
 			keys: options.keys
 			controller: @
 		snake = new Snake opts
 		@registerItem snake
-		snake.on 'state:changed', @updateStates
+		snake.on 'state:changed', @handleStateChanged
 
-	updateStates: =>
+	handleStateChanged: =>
 		statesDetails = []
 		for item in @items
 			if item.getType() is 'snake' and item.getKeys()?

@@ -125,12 +125,6 @@ export default class Snake extends BoardItem
 				x:x
 				y:y
 
-	getColor: ->
-		@color
-
-	getTrail: ->
-		@trail
-
 	setPos: (pos)->
 		@pos = pos if pos?
 		@setTrail pos
