@@ -10,6 +10,7 @@ export default class CanvasController
 		@ctx.fillStyle = 'black'
 		@ctx.fillRect 0, 0, @boardSize*@pixelSize, @boardSize*@pixelSize
 
-	draw: (pos,color)->
-		@ctx.fillStyle = color
-		@ctx.fillRect pos.x*@pixelSize, pos.y*@pixelSize, @pixelSize-2, @pixelSize-2
+	draw: (posArray,color)->
+		for pos in posArray
+			@ctx.fillStyle = color
+			@ctx.fillRect pos.x*@pixelSize, pos.y*@pixelSize, @pixelSize-2, @pixelSize-2

@@ -11,8 +11,11 @@ export default class Snake extends BoardItem
 	getType: ->
 		'apple'
 
-	draw: ->
-		@controller.draw @pos, 'orange'
+	getPosition: ->
+		[@pos]
+
+	getColor: ->
+		@color
 
 	hasPosition: (pos)->
 		if pos?

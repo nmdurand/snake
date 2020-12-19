@@ -40,9 +40,11 @@ export default class Snake extends BoardItem
 		color: @color
 		keys: @keys
 
-	draw: ->
-		for pos in @trail
-			@controller.draw pos, @color
+	getPosition: ->
+		@trail
+
+	getColor: ->
+		@color
 
 	hasPosition: (pos)->
 		if pos?

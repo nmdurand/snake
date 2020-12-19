@@ -68,6 +68,8 @@ export default class Game extends Marionette.MnObject
 
 		@addSnake
 			color: 'red'
+		@addSnake
+			color: 'red'
 
 		@addApples 6
 		@updateStates()
@@ -135,7 +137,7 @@ export default class Game extends Marionette.MnObject
 
 	drawItems: ->
 		for item in @items
-			item.draw()
+			@draw item.getPosition(), item.getColor()
 
 	handleGameEnd: ->
 		clearInterval @refreshInterval
