@@ -1,6 +1,6 @@
 import BoardItem from 'engine/boardItem'
 
-export default class Snake extends BoardItem
+export default class Apple extends BoardItem
 	constructor: (options)->
 		super()
 		{ @color, @controller } = options

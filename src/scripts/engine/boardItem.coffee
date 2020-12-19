@@ -1,11 +1,17 @@
-import EventEmitter from 'events'
+import Marionette from 'backbone.marionette'
 
-export default class BoardItem extends EventEmitter
-	constructor: (options)->
-		super()
+export default class BoardItem extends Marionette.MnObject
+	initialize: (options)->
+		console.log 'Initializing BoardItem with options', options
 
 	getType: ->
 		'item'
+
+	getId: ->
+		null
+
+	getKeys: ->
+		null
 
 	draw: ->
 		console.log 'Drawing item on board'

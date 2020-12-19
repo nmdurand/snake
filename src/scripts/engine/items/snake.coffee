@@ -1,3 +1,4 @@
+import Radio from 'backbone.radio'
 import BoardItem from 'engine/boardItem'
 
 DIRECTIONS = ['up','down','left','right']
@@ -13,6 +14,8 @@ export default class Snake extends BoardItem
 		@score = 0
 		@tailSize = 5
 		@boardSize = @controller.getBoardSize()
+		@playerChannel = Radio.channel "player#{@id}"
+		@gameChannel = Radio.channel "game"
 		@initialize()
 
 		unless @keys?
@@ -138,9 +141,9 @@ export default class Snake extends BoardItem
 		unless @frozen
 			@frozen = true
 			@lives -= 1
-			@emit 'state:changed'
+			@playerChannel.trigger 'lives:changed', @lives
 			if @lives is 0
-				@emit 'game:end'
+				@gameChannel.trigger 'game:end', @getId()
 			else
 				@initialize()
 				setTimeout (=>
@@ -153,4 +156,4 @@ export default class Snake extends BoardItem
 	updatePoints: (val)->
 		if @id
 			@score += val
-			@emit 'state:changed'
+			@playerChannel.trigger 'score:changed', @score

@@ -1,5 +1,6 @@
 
 import Marionette from 'backbone.marionette'
+import Radio from 'backbone.radio'
 
 import CanvasController from 'engine/canvas'
 
@@ -19,6 +20,9 @@ export default class Game extends Marionette.MnObject
 		{@showView} = @options
 		@items = []
 		@idGenerator = 0
+		@gameChannel = Radio.channel "game"
+
+		@gameChannel.on 'game:end', (id)=> @handleGameEnd id
 
 	generateId: ->
 		@idGenerator += 1
@@ -68,10 +72,17 @@ export default class Game extends Marionette.MnObject
 
 		@addMachineSnakes 2
 		@addApples 6
-		@handleStateChanged()
+		@initStateDisplay()
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
 		@refreshInterval = setInterval (=> @refreshGame()), 1000/15
+
+	initStateDisplay: =>
+		statesDetails = []
+		for item in @items
+			if item.getKeys()?
+				statesDetails.push item.getDetails()
+		@updateStateDisplay statesDetails
 
 	addApples: (n)->
 		for i in [1..n]
@@ -94,14 +105,6 @@ export default class Game extends Marionette.MnObject
 			controller: @
 		snake = new Snake opts
 		@registerItem snake
-		snake.on 'state:changed', @handleStateChanged
-
-	handleStateChanged: =>
-		statesDetails = []
-		for item in @items
-			if item.getType() is 'snake' and item.getKeys()?
-				statesDetails.push item.getDetails()
-		@updateStateDisplay statesDetails
 
 	handleKeydown: (e)->
 		for item in @items
@@ -115,7 +118,6 @@ export default class Game extends Marionette.MnObject
 
 	registerItem: (item)->
 		@items.push item
-		item.on 'game:end', => @handleGameEnd()
 
 	step: ->
 		for item1 in @items
@@ -139,6 +141,16 @@ export default class Game extends Marionette.MnObject
 		for item in @items
 			@draw item.getPosition(), item.getColor()
 
-	handleGameEnd: ->
-		clearInterval @refreshInterval
-		console.log 'Game ended !'
+	unregisterItem: (id)->
+		@items = _.filter @items, (item)-> item.getId() isnt id
+
+	hasActivePlayers: ->
+		index = _.findIndex @items, (item)-> item.getKeys()?
+		index isnt -1
+
+	handleGameEnd: (id)->
+		console.log 'Game ended for item:', id
+		@unregisterItem id
+		unless @hasActivePlayers()
+			console.log 'THE END!!!'
+			clearInterval @refreshInterval
