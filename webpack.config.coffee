@@ -25,6 +25,8 @@ module.exports =
 		,
 			test: /\.hbs$/
 			loader: 'handlebars-loader'
+			options:
+				helperDirs: [path.resolve 'src/scripts/templates/helpers']
 		,
 			test: /\.(png|svg|jpg|gif|svg)$/
 			loader: 'file-loader'

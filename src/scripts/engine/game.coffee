@@ -41,6 +41,9 @@ export default class Game extends Marionette.MnObject
 	getPixelSize: ->
 		pxSize
 
+	getItems: ->
+		@items
+
 	draw: (args...)->
 		@canvasController.draw args...
 
@@ -67,6 +70,7 @@ export default class Game extends Marionette.MnObject
 			color: 'red'
 
 		@addApples 6
+		@updateStates()
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
 		@refreshInterval = setInterval (=> @refreshGame()), 1000/15
@@ -79,13 +83,23 @@ export default class Game extends Marionette.MnObject
 
 	addSnake: (options)->
 		console.log 'Adding snake', options
+		id = @generateId()
 		opts =
-			id: @generateId()
-			playerName: options.playerName
+			id: id
+			playerName: "Player #{id}"
 			color: options.color
 			keys: options.keys
 			controller: @
-		@registerItem new Snake(opts)
+		snake = new Snake opts
+		@registerItem snake
+		snake.on 'state:changed', @updateStates
+
+	updateStates: =>
+		statesDetails = []
+		for item in @items
+			if item.getType() is 'snake' and item.getKeys()?
+				statesDetails.push item.getDetails()
+		@updateStateDisplay statesDetails
 
 	handleKeydown: (e)->
 		for item in @items
@@ -109,7 +123,7 @@ export default class Game extends Marionette.MnObject
 					if item2.getType() is 'apple'
 						if item2.hasPosition nextPos1
 							item1.grow()
-							# item1.updatePoints item2.getPoints()
+							item1.updatePoints item2.getPoints()
 							item2.setNewPos()
 					else if item2.getType() is 'snake'
 						if item2.hasPosition nextPos1

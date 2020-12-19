@@ -15,10 +15,8 @@ export default class Snake extends BoardItem
 		@boardSize = @controller.getBoardSize()
 		@initialize()
 
-		if @keys?
-			# @setupScoreDisplay()
-		else
-			@triggerNewDirection()
+		unless @keys?
+			@triggerRandomDirection()
 
 	initialize: ->
 		@setDir 'stop'
@@ -30,6 +28,17 @@ export default class Snake extends BoardItem
 
 	getId: ->
 		@id
+
+	getKeys: ->
+		@keys
+
+	getDetails: ->
+		id: @id
+		lives: @lives
+		score: @score
+		playerName: @playerName
+		color: @color
+		keys: @keys
 
 	draw: ->
 		for pos in @trail
@@ -59,11 +68,11 @@ export default class Snake extends BoardItem
 				when @keys.down
 					@setDir 'down'
 
-	triggerNewDirection: ->
+	triggerRandomDirection: ->
 		timeout = 1500*Math.random()
 		setTimeout =>
 			@setDir DIRECTIONS[Math.floor(Math.random()*4)]
-			@triggerNewDirection()
+			@triggerRandomDirection()
 		, timeout
 
 	setDir: (dir)->
@@ -133,7 +142,7 @@ export default class Snake extends BoardItem
 		unless @frozen
 			@frozen = true
 			@lives -= 1
-			# @updateLives()
+			@emit 'state:changed'
 			if @lives is 0
 				@emit 'game:end'
 			else
@@ -145,42 +154,7 @@ export default class Snake extends BoardItem
 	grow: ->
 		@tailSize += 1
 
-	###### SCORE
-
-	# setupScoreDisplay: ->
-	# 	scoreList = document.getElementById "scoreList"
-	# 	player = document.createElement 'div'
-	# 	player.classList.add 'player'
-	# 	playerName = document.createElement 'div'
-	# 	playerName.classList.add 'playerName'
-	# 	playerName.innerHTML = @playerName + " / "
-	# 	scoreValue = document.createElement 'div'
-	# 	scoreValue.classList.add 'scoreValue'
-	# 	scoreValue.innerHTML = 0
-	# 	scoreValue.id = "player#{@id}-score"
-	# 	@livesContainer = document.createElement 'div'
-	# 	@livesContainer.classList.add 'livesContainer'
-	# 	@updateLives()
-	#
-	# 	player.appendChild playerName
-	# 	player.appendChild scoreValue
-	# 	player.appendChild @livesContainer
-	# 	scoreList.append player
-	#
-	# updatePoints: (val)->
-	# 	if @id
-	# 		@score += val
-	# 		@updateScoreDisplay()
-	#
-	# updateScoreDisplay: ->
-	# 	scoreDiv = document.getElementById "player#{@id}-score"
-	# 	scoreDiv.innerHTML = @score
-	#
-	# updateLives: =>
-	# 	if @livesContainer?
-	# 		@livesContainer.innerHTML = ''
-	# 		if @lives > 0
-	# 			for i in [1..@lives]
-	# 				lifeIcon = document.createElement 'div'
-	# 				lifeIcon.classList.add 'lifeIcon'
-	# 				@livesContainer.appendChild lifeIcon
+	updatePoints: (val)->
+		if @id
+			@score += val
+			@emit 'state:changed'

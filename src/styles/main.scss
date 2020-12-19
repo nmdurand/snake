@@ -1,28 +1,41 @@
 
-.title {
-	font-size: 3em;
-	text-align: center;
-}
-.gameContainer {
-	display: flex;
-	.scores {
-		font-size: 2em;
-		.scoreTitle {
-			text-align: center;
-		}
-		#scoreList {
-			.player {
-				display: flex;
-				.livesContainer {
-					display: flex;
-				}
-				.lifeIcon {
-					height: 20px;
-					width: 20px;
-					background-image: url('../images/heart-solid.svg');
-					background-repeat: no-repeat;
-					background-size: 100%;
-					margin: 5px;
+body {
+	font-family: Arial;
+
+	.title {
+		font-size: 3em;
+		text-align: center;
+	}
+	#container {
+		.gameLayout {
+			display: flex;
+			#boardRegion {}
+			#scoresRegion {
+				.scoreList {
+					font-size: 2em;
+					.scoreItem {
+						padding: 1rem;
+						margin: 1rem;
+						border: 1px solid black;
+						border-radius: 5px;
+						.playerName {
+
+						}
+						.scoreValue {
+							text-align: right;
+						}
+						.livesContainer {
+							display: flex;
+							.lifeIcon {
+								height: 20px;
+								width: 20px;
+								background-image: url('../images/heart-solid.svg');
+								background-repeat: no-repeat;
+								background-size: 100%;
+								margin: 5px;
+							}
+						}
+					}
 				}
 			}
 		}
