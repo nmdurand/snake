@@ -13,8 +13,11 @@ export default class Snake extends BoardItem
 		@frozen = false
 		@score = 0
 		@tailSize = 5
+
 		@scoresChannel = Radio.channel 'scores'
 		@playerStateChannel = Radio.channel "state:#{@id}"
+		@controlChannel = Radio.channel 'control'
+		@controlChannel.on 'keydown', (keycode)=> @handleKeydown keycode
 
 		@gameChannel = Radio.channel "game"
 		@initialize()

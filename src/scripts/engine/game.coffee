@@ -19,7 +19,8 @@ export default class Game extends Marionette.MnObject
 		{ @showView } = @options
 		@items = []
 		@idGenerator = 0
-		@gameChannel = Radio.channel "game"
+		@gameChannel = Radio.channel 'game'
+		@controlChannel = Radio.channel 'control'
 
 		@gameChannel.on 'game:end', (id)=> @handleGameEnd id
 
@@ -67,7 +68,8 @@ export default class Game extends Marionette.MnObject
 		@addMachineSnakes 2
 		@addApples 6
 
-		document.addEventListener 'keydown', (e)=> @handleKeydown e
+		document.addEventListener 'keydown', (e)=>
+			@controlChannel.trigger 'keydown', e.which
 		@refreshInterval = setInterval (=> @refreshGame()), 1000/15
 
 	addApples: (n)->
@@ -90,11 +92,6 @@ export default class Game extends Marionette.MnObject
 			boardSize: boardSize
 		snake = new Snake opts
 		@registerItem snake
-
-	handleKeydown: (e)->
-		for item in @items
-			if item.handleKeydown?
-				item.handleKeydown e.which
 
 	refreshGame: ->
 		@canvasController.erase()
