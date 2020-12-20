@@ -28,7 +28,9 @@ export default class Snake extends BoardItem
 			@scoresChannel.request 'set:display', @getDetails()
 
 	initialize: ->
-		@setDir 'stop'
+		@vel =
+			x: 0
+			y: 0
 		@trail = []
 		@setNewPos()
 
