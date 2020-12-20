@@ -3,8 +3,7 @@ import BoardItem from 'engine/boardItem'
 export default class Apple extends BoardItem
 	constructor: (options)->
 		super()
-		{ @color, @controller } = options
-		@boardSize = @controller.getBoardSize()
+		{ @color, @boardSize } = options
 
 		@setNewPos()
 

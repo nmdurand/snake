@@ -11,18 +11,14 @@ class ScoreItemView extends Marionette.View
 
 	initialize: ->
 		console.log 'Initializing ScoreItemView', @options
-		@playerChannel = Radio.channel "player#{@model.get('id')}"
+		@playerStateChannel = Radio.channel "state:#{@model.get('id')}"
 
-		@playerChannel.on 'lives:changed', (lives)=> @handleUpdateLives lives
-		@playerChannel.on 'score:changed', (score)=> @handleUpdateScore score
+		@playerStateChannel.on 'state:change', (state)=> @updateStateDisplay state
 
 		@model.on 'change', => @render()
 
-	handleUpdateScore: (score)->
-		@model.set 'score', score
-
-	handleUpdateLives: (lives)->
-		@model.set 'lives', lives
+	updateStateDisplay: (state)->
+		@model.set state
 
 export default class ScoresView extends Marionette.CollectionView
 	template: false
@@ -32,8 +28,8 @@ export default class ScoresView extends Marionette.CollectionView
 
 	initialize: ->
 		console.log 'Initializing ScoresView', @options
-		{ @controller } = @options
 		@collection = new Backbone.Collection
 
-		@controller.updateStateDisplay = (statesDetails)=>
-			@collection.reset statesDetails
+		@scoresChannel = Radio.channel 'scores'
+		@scoresChannel.reply 'set:display', (details)=>
+			@collection.add details

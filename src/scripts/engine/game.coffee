@@ -7,17 +7,16 @@ import CanvasController from 'engine/canvas'
 import GameLayout from 'views/layout'
 import _ from 'lodash'
 
-# import Board from 'engine/board'
 import Snake from 'engine/items/snake'
 import Apple from 'engine/items/apple'
 
 boardSize = 40 # In 'pixels'
-pxSize = 20 # 'Pixels' size
+pixelSize = 20 # 'Pixels' size
 
 export default class Game extends Marionette.MnObject
 	initialize: ->
 		console.log 'Initializing game controller.',@options
-		{@showView} = @options
+		{ @showView } = @options
 		@items = []
 		@idGenerator = 0
 		@gameChannel = Radio.channel "game"
@@ -31,19 +30,14 @@ export default class Game extends Marionette.MnObject
 		console.log 'Game started.'
 		@showGame()
 		@canvasController = new CanvasController
-			controller: @
 		@startGame()
 
 	showGame: ->
 		unless @layout?
 			@layout = new GameLayout
-				controller: @
+				boardSize: boardSize
+				pixelSize: pixelSize
 		@showView @layout
-
-	getBoardSize: ->
-		boardSize
-	getPixelSize: ->
-		pxSize
 
 	getItems: ->
 		@items
@@ -72,23 +66,15 @@ export default class Game extends Marionette.MnObject
 
 		@addMachineSnakes 2
 		@addApples 6
-		@initStateDisplay()
 
 		document.addEventListener 'keydown', (e)=> @handleKeydown e
 		@refreshInterval = setInterval (=> @refreshGame()), 1000/15
-
-	initStateDisplay: =>
-		statesDetails = []
-		for item in @items
-			if item.getKeys()?
-				statesDetails.push item.getDetails()
-		@updateStateDisplay statesDetails
 
 	addApples: (n)->
 		for i in [1..n]
 			@registerItem new Apple
 				color: 'orange'
-				controller: @
+				boardSize: boardSize
 
 	addMachineSnakes: (n)->
 		for i in [1..n]
@@ -96,13 +82,12 @@ export default class Game extends Marionette.MnObject
 				color: 'red'
 
 	addSnake: (options)->
-		console.log 'Adding snake', options
 		opts =
 			id: @generateId()
 			playerName: options.playerName
 			color: options.color
 			keys: options.keys
-			controller: @
+			boardSize: boardSize
 		snake = new Snake opts
 		@registerItem snake
 

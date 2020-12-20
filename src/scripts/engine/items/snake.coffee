@@ -7,19 +7,22 @@ FAIL_TIMEOUT = 1000
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @id, @playerName, @color, @keys, @controller } = options
+		{ @id, @playerName, @color, @keys, @boardSize } = options
 		console.log 'Initializing snake', options
 		@lives = 3
 		@frozen = false
 		@score = 0
 		@tailSize = 5
-		@boardSize = @controller.getBoardSize()
-		@playerChannel = Radio.channel "player#{@id}"
+		@scoresChannel = Radio.channel 'scores'
+		@playerStateChannel = Radio.channel "state:#{@id}"
+
 		@gameChannel = Radio.channel "game"
 		@initialize()
 
 		unless @keys?
 			@triggerRandomDirection()
+		else
+			@scoresChannel.request 'set:display', @getDetails()
 
 	initialize: ->
 		@setDir 'stop'
@@ -141,7 +144,8 @@ export default class Snake extends BoardItem
 		unless @frozen
 			@frozen = true
 			@lives -= 1
-			@playerChannel.trigger 'lives:changed', @lives
+			@playerStateChannel.trigger 'state:change',
+				lives: @lives
 			if @lives is 0
 				@gameChannel.trigger 'game:end', @getId()
 			else
@@ -156,4 +160,5 @@ export default class Snake extends BoardItem
 	updatePoints: (val)->
 		if @id
 			@score += val
-			@playerChannel.trigger 'score:changed', @score
+			@playerStateChannel.trigger 'state:change',
+				score: @score

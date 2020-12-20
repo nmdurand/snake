@@ -1,7 +1,7 @@
 import Marionette from 'backbone.marionette'
 import template from 'templates/layout'
 
-import BoardView from 'views/board'
+import CanvasView from 'views/canvas'
 import ScoresView from 'views/scores'
 
 export default class GameLayoutView extends Marionette.View
@@ -14,13 +14,13 @@ export default class GameLayoutView extends Marionette.View
 
 	initialize: ->
 		console.log 'Initializing GameLayoutView', @options
-		{ @controller } = @options
+		{ @boardSize, @pixelSize } = @options
 
 	onRender: ->
-		boardView = new BoardView
-			controller: @controller
+		boardView = new CanvasView
+			boardSize: @boardSize
+			pixelSize: @pixelSize
 		@showChildView 'boardRegion', boardView
 
 		scoresView = new ScoresView
-			controller: @controller
 		@showChildView 'scoresRegion', scoresView

@@ -1,16 +1,13 @@
+import Marionette from 'backbone.marionette'
+import Radio from 'backbone.radio'
 
-export default class CanvasController
-	constructor: (options)->
-		{ @controller } = options
-		@boardSize = @controller.getBoardSize()
-		@pixelSize = @controller.getPixelSize()
-		@ctx = @controller.getCtx()
+export default class CanvasController extends Marionette.MnObject
+	initialize: (options)->
+		console.log 'Initializing canvas controller'
+		@boardChannel = Radio.channel 'board'
 
 	erase: ->
-		@ctx.fillStyle = 'black'
-		@ctx.fillRect 0, 0, @boardSize*@pixelSize, @boardSize*@pixelSize
+		@boardChannel.request 'erase:canvas'
 
 	draw: (posArray,color)->
-		for pos in posArray
-			@ctx.fillStyle = color
-			@ctx.fillRect pos.x*@pixelSize, pos.y*@pixelSize, @pixelSize-2, @pixelSize-2
+		@boardChannel.request 'draw:canvas', posArray, color
