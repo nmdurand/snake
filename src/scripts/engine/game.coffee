@@ -20,7 +20,6 @@ export default class Game extends Marionette.MnObject
 		@items = []
 		@idGenerator = 0
 		@gameChannel = Radio.channel 'game'
-		@controlChannel = Radio.channel 'control'
 
 		@gameChannel.on 'game:end', (id)=> @handleGameEnd id
 
@@ -69,7 +68,7 @@ export default class Game extends Marionette.MnObject
 		@addApples 6
 
 		document.addEventListener 'keydown', (e)=>
-			@controlChannel.trigger 'keydown', e.which
+			@gameChannel.trigger 'keydown', e.which
 		@refreshInterval = setInterval (=> @refreshGame()), 1000/15
 
 	addApples: (n)->

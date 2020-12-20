@@ -16,10 +16,10 @@ export default class Snake extends BoardItem
 
 		@scoresChannel = Radio.channel 'scores'
 		@playerStateChannel = Radio.channel "state:#{@id}"
-		@controlChannel = Radio.channel 'control'
-		@controlChannel.on 'keydown', (keycode)=> @handleKeydown keycode
 
-		@gameChannel = Radio.channel "game"
+		@gameChannel = Radio.channel 'game'
+		@gameChannel.on 'keydown', (keycode)=> @handleKeydown keycode
+
 		@initialize()
 
 		unless @keys?
