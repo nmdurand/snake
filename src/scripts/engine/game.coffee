@@ -137,5 +137,6 @@ export default class Game extends Marionette.MnObject
 		console.log 'Game ended for item:', id
 		@unregisterItem id
 		unless @hasActivePlayers()
-			console.log 'THE END!!!'
+			console.log 'Game ended'
 			clearInterval @refreshInterval
+			@trigger 'game:end'

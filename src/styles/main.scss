@@ -1,12 +1,31 @@
+@import 'mixins';
+
 
 body {
 	font-family: Arial;
-
-	.title {
-		font-size: 3em;
-		text-align: center;
-	}
 	#container {
+		@include fillparent;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		.splash {
+			.title {
+				font-size: 2em;
+				font-weight: bold;
+			}
+			#startButton {
+				text-align: center;
+				padding: .5em;
+				background-color: lightgrey;
+				cursor: pointer;
+				border-radius: 5px;
+				&:hover {
+					background-color: grey;
+				}
+			}
+		}
+
 		.gameLayout {
 			display: flex;
 			#boardRegion {}
