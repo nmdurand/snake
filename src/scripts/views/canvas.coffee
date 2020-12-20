@@ -4,7 +4,7 @@ import template from 'templates/canvas'
 
 export default class CanvasView extends Marionette.View
 	template: template
-	className: 'board'
+	className: 'canvas'
 
 	ui:
 		canvas: '#canvas'
@@ -12,10 +12,10 @@ export default class CanvasView extends Marionette.View
 	initialize: ->
 		console.log 'Initializing CanvasView', @options
 		{ @boardSize, @pixelSize } = @options
-		@boardChannel = Radio.channel 'board'
+		@canvasChannel = Radio.channel 'canvas'
 
-		@boardChannel.reply 'erase:canvas', => @erase()
-		@boardChannel.reply 'draw:canvas', (posArray,color)=> @draw posArray,color
+		@canvasChannel.reply 'erase:canvas', => @erase()
+		@canvasChannel.reply 'draw:canvas', (posArray,color)=> @draw posArray,color
 
 	onRender: ->
 		@ui.canvas.attr

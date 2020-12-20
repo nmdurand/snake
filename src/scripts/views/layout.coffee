@@ -9,7 +9,7 @@ export default class GameLayoutView extends Marionette.View
 	className: 'gameLayout'
 
 	regions:
-		boardRegion: '#boardRegion'
+		canvasRegion: '#canvasRegion'
 		scoresRegion: '#scoresRegion'
 
 	initialize: ->
@@ -17,10 +17,10 @@ export default class GameLayoutView extends Marionette.View
 		{ @boardSize, @pixelSize } = @options
 
 	onRender: ->
-		boardView = new CanvasView
+		canvasView = new CanvasView
 			boardSize: @boardSize
 			pixelSize: @pixelSize
-		@showChildView 'boardRegion', boardView
+		@showChildView 'canvasRegion', canvasView
 
 		scoresView = new ScoresView
 		@showChildView 'scoresRegion', scoresView

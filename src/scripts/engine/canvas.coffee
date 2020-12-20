@@ -4,10 +4,10 @@ import Radio from 'backbone.radio'
 export default class CanvasController extends Marionette.MnObject
 	initialize: (options)->
 		console.log 'Initializing canvas controller'
-		@boardChannel = Radio.channel 'board'
+		@canvasChannel = Radio.channel 'canvas'
 
 	erase: ->
-		@boardChannel.request 'erase:canvas'
+		@canvasChannel.request 'erase:canvas'
 
 	draw: (posArray,color)->
-		@boardChannel.request 'draw:canvas', posArray, color
+		@canvasChannel.request 'draw:canvas', posArray, color
