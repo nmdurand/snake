@@ -11,8 +11,11 @@ export default class CanvasView extends Marionette.View
 
 	initialize: ->
 		console.log 'Initializing CanvasView', @options
-		{ @boardSize, @pixelSize } = @options
 		@canvasChannel = Radio.channel 'canvas'
+		@gameChannel = Radio.channel 'game'
+
+		@boardSize = @gameChannel.request 'board:size'
+		@pixelSize = @gameChannel.request 'pixel:size'
 
 		@canvasChannel.reply 'erase:canvas', => @erase()
 		@canvasChannel.reply 'draw:canvas', (posArray,color)=> @draw posArray,color

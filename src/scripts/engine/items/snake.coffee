@@ -1,5 +1,5 @@
 import Radio from 'backbone.radio'
-import BoardItem from 'engine/boardItem'
+import BoardItem from 'engine/items/item'
 
 DIRECTIONS = ['up','down','left','right']
 FAIL_TIMEOUT = 1000
@@ -7,7 +7,7 @@ FAIL_TIMEOUT = 1000
 export default class Snake extends BoardItem
 	constructor: (options)->
 		super()
-		{ @id, @playerName, @color, @keys, @boardSize } = options
+		{ @id, @playerName, @color, @keys } = options
 		console.log 'Initializing snake', options
 		@lives = 3
 		@frozen = false
@@ -18,8 +18,8 @@ export default class Snake extends BoardItem
 		@gameChannel = Radio.channel 'game'
 
 		@gameChannel.on 'keydown', (keycode)=> @handleKeydown keycode
-		@gameChannel.on 'draw', =>
-			@canvasChannel.request 'draw:canvas', @getPosition(), @getColor()
+
+		@boardSize = @gameChannel.request 'board:size'
 
 		@initialize()
 

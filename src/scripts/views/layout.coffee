@@ -14,12 +14,9 @@ export default class GameLayoutView extends Marionette.View
 
 	initialize: ->
 		console.log 'Initializing GameLayoutView', @options
-		{ @boardSize, @pixelSize } = @options
 
 	onRender: ->
 		canvasView = new CanvasView
-			boardSize: @boardSize
-			pixelSize: @pixelSize
 		@showChildView 'canvasRegion', canvasView
 
 		scoresView = new ScoresView

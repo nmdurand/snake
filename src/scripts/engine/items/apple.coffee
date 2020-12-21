@@ -1,16 +1,15 @@
 import Radio from 'backbone.radio'
-import BoardItem from 'engine/boardItem'
+import BoardItem from 'engine/items/item'
 
 export default class Apple extends BoardItem
 	constructor: (options)->
 		super()
-		{ @color, @boardSize } = options
+		{ @color } = options
 
 		@gameChannel = Radio.channel 'game'
 		@canvasChannel = Radio.channel 'canvas'
-		@gameChannel.on 'draw', =>
-			@canvasChannel.request 'draw:canvas', @getPosition(), @getColor()
 
+		@boardSize = @gameChannel.request 'board:size'
 		@setNewPos()
 
 	getType: ->
