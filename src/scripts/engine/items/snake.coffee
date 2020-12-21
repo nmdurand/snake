@@ -9,13 +9,11 @@ export default class Snake extends BoardItem
 		super()
 		{ @id, @playerName, @color, @keys, @boardSize } = options
 		console.log 'Initializing snake', options
-		@lives = 1
+		@lives = 3
 		@frozen = false
 		@score = 0
 		@tailSize = 5
 
-		@scoresChannel = Radio.channel 'scores'
-		@playerStateChannel = Radio.channel "state:#{@id}"
 		@canvasChannel = Radio.channel 'canvas'
 		@gameChannel = Radio.channel 'game'
 
@@ -28,7 +26,7 @@ export default class Snake extends BoardItem
 		unless @keys?
 			@triggerRandomDirection()
 		else
-			@scoresChannel.request 'set:display', @getDetails()
+			@gameChannel.request 'set:state:display', @getDetails()
 
 	initialize: ->
 		@vel =
@@ -152,7 +150,7 @@ export default class Snake extends BoardItem
 		unless @frozen
 			@frozen = true
 			@lives -= 1
-			@playerStateChannel.trigger 'state:change',
+			@gameChannel.trigger 'state:change', @getId(),
 				lives: @lives
 			if @lives is 0
 				@gameChannel.trigger 'game:end', @getId()
@@ -169,5 +167,5 @@ export default class Snake extends BoardItem
 	updatePoints: (val)->
 		if @id
 			@score += val
-			@playerStateChannel.trigger 'state:change',
+			@gameChannel.trigger 'state:change', @getId(),
 				score: @score
