@@ -2,8 +2,6 @@
 import Marionette from 'backbone.marionette'
 import Radio from 'backbone.radio'
 
-import CanvasController from 'engine/canvas'
-
 import GameLayout from 'views/layout'
 import _ from 'lodash'
 
@@ -20,6 +18,7 @@ export default class Game extends Marionette.MnObject
 		@items = []
 		@idGenerator = 0
 		@gameChannel = Radio.channel 'game'
+		@canvasChannel = Radio.channel 'canvas'
 
 		@gameChannel.on 'game:end', (id)=> @handleGameEnd id
 
@@ -29,7 +28,6 @@ export default class Game extends Marionette.MnObject
 	start: ->
 		console.log 'Game started.'
 		@showGame()
-		@canvasController = new CanvasController
 		@startGame()
 
 	showGame: ->
@@ -41,9 +39,6 @@ export default class Game extends Marionette.MnObject
 
 	getItems: ->
 		@items
-
-	draw: (args...)->
-		@canvasController.draw args...
 
 	startGame: ->
 		@addSnake
@@ -93,9 +88,9 @@ export default class Game extends Marionette.MnObject
 		@registerItem snake
 
 	refreshGame: ->
-		@canvasController.erase()
+		@canvasChannel.request 'erase:canvas'
 		@step()
-		@drawItems()
+		@gameChannel.trigger 'draw'
 
 	registerItem: (item)->
 		@items.push item
@@ -118,12 +113,8 @@ export default class Game extends Marionette.MnObject
 
 				item1.setPos nextPos1
 
-	drawItems: ->
-		for item in @items
-			@draw item.getPosition(), item.getColor()
-
 	unregisterItem: (id)->
-		@items = _.filter @items, (item)-> item.getId() isnt id
+		_.remove @items, (item)-> item.getId() is id
 
 	hasActivePlayers: ->
 		index = _.findIndex @items, (item)-> item.getKeys()?

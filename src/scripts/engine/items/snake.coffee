@@ -9,16 +9,19 @@ export default class Snake extends BoardItem
 		super()
 		{ @id, @playerName, @color, @keys, @boardSize } = options
 		console.log 'Initializing snake', options
-		@lives = 3
+		@lives = 1
 		@frozen = false
 		@score = 0
 		@tailSize = 5
 
 		@scoresChannel = Radio.channel 'scores'
 		@playerStateChannel = Radio.channel "state:#{@id}"
-
+		@canvasChannel = Radio.channel 'canvas'
 		@gameChannel = Radio.channel 'game'
+
 		@gameChannel.on 'keydown', (keycode)=> @handleKeydown keycode
+		@gameChannel.on 'draw', =>
+			@canvasChannel.request 'draw:canvas', @getPosition(), @getColor()
 
 		@initialize()
 
@@ -153,6 +156,7 @@ export default class Snake extends BoardItem
 				lives: @lives
 			if @lives is 0
 				@gameChannel.trigger 'game:end', @getId()
+				@trail = []
 			else
 				@initialize()
 				setTimeout (=>
